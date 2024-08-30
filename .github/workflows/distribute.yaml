@@ -34,7 +34,7 @@ jobs:
 
       - name: Push changes back to target repo
         run: |
-          git subtree push --prefix=${{matrix.module}} https://github.com/ApolloXIV/${{matrix.module}}.git main
+          git subtree push --prefix=${{matrix.module}} https://github.com/Apollo-XIV/${{matrix.module}}.git main
 
       - name: Clean up remotes
         run: git remote remove ${{matrix.module}}

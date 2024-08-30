@@ -24,21 +24,32 @@ jobs:
           git config --global user.email "actions@github.com"
           git config pull.rebase false
 
-      - name: Fetch full history to avoid shallow clone issues
-        run: git fetch --unshallow
+      - name: Copy Module Files
+        run: |
+          cp -r ${{ matrix.module }} git-${{matrix.module}}
+      - name: Git Init
+        run: |
+          cd git-${{matrix.module}} 
+          git init
 
       - name: Add the target repo as a remote
         run: |
+          cd git-${{matrix.module}} 
           git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/${{matrix.module}}.git
           git fetch ${{matrix.module}}
 
-      - name: Pull from target repo with --allow-unrelated-histories
+      - name: Push changes
         run: |
-          git pull --allow-unrelated-histories ${{matrix.module}} main
+          cd git-${{matrix.module}} 
+          git push --force --set-upstream ${{matrix.module}} main
 
-      - name: Add or update the subtree
-        run: |
-          git subtree add --prefix=${{matrix.module}} ${{matrix.module}} main --squash || git subtree pull --prefix=${{matrix.module}} ${{matrix.module}} main --squash
+      # - name: Pull from target repo with --allow-unrelated-histories
+      #   run: |
+      #     git pull --allow-unrelated-histories ${{matrix.module}} main
+
+      # - name: Add or update the subtree
+        # run: |
+          # git subtree add --prefix=${{matrix.module}} ${{matrix.module}} main --squash || git subtree pull --prefix=${{matrix.module}} ${{matrix.module}} main --squash
 
       - name: Push changes back to target repo
         run: |

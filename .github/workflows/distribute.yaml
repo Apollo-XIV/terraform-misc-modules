@@ -12,9 +12,9 @@ jobs:
     strategy:
       matrix:
         module:
-          - backend-module
-          - s3-backend
-          - env-gen
+          - backend_manager
+          - s3_backend
+          - env_gen
 
     steps:
       - name: Checkout main repository

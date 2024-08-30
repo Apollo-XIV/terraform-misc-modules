@@ -22,6 +22,7 @@ jobs:
           git config --unset-all http.https://github.com/.extraheader
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          git config pull.rebase false
 
       - name: Fetch full history to avoid shallow clone issues
         run: git fetch --unshallow

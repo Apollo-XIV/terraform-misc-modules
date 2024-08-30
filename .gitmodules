@@ -1,0 +1,3 @@
+[submodule "terraform-backend-manager"]
+	path = terraform-backend-manager
+	url = https://github.com/Apollo-XIV/terraform-backend-manager

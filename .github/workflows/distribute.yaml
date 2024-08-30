@@ -28,20 +28,20 @@ jobs:
 
       - name: Add the target repo as a remote
         run: |
-          git remote add ${matrix.repo_name} https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/${matrix.repo_name}.git
-          git fetch ${matrix.repo_name}
+          git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/${{matrix.module}}.git
+          git fetch ${{matrix.module}}
 
       - name: Pull from target repo with --allow-unrelated-histories
         run: |
-          git pull --allow-unrelated-histories ${matrix.repo_name} main
+          git pull --allow-unrelated-histories ${{matrix.module}} main
 
       - name: Add or update the subtree
         run: |
-          git subtree add --prefix=${matrix.folder_name} ${matrix.repo_name} main --squash || git subtree pull --prefix=${matrix.folder_name} ${matrix.repo_name} main --squash
+          git subtree add --prefix=${{matrix.module}} ${{matrix.module}} main --squash || git subtree pull --prefix=${{matrix.module}} ${{matrix.module}} main --squash
 
       - name: Push changes back to target repo
         run: |
-          git push ${matrix.repo_name} HEAD:main
+          git push ${{matrix.module}} HEAD:main
 
       - name: Clean up remotes
-        run: git remote remove ${matrix.repo_name}
+        run: git remote remove ${{matrix.module}}

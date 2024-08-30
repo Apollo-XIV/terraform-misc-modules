@@ -36,7 +36,6 @@ jobs:
             echo "No tags found, setting version to v0.1.0"
             new_version="v0.1.0"
           else
-            latest_tag="${GITHUB_ENV#v}"
             major=$(echo "$latest_tag" | cut -d'.' -f1)
             minor=$(echo "$latest_tag" | cut -d'.' -f2)
             next=($(echo "$latest_tag" | cut -d'.' -f3) + 1)

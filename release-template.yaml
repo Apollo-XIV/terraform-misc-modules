@@ -36,10 +36,9 @@ jobs:
             echo "No tags found, setting version to v0.1.0"
             new_version="v0.1.0"
           else
-            major=$(echo "$version" | sed -E 's/v([0-9]+)\.([0-9]+)\.([0-9]+)/\1/')
-            minor=$(echo "$version" | sed -E 's/v([0-9]+)\.([0-9]+)\.([0-9]+)/\2/')
-            patch=$(echo "$version" | sed -E 's/v([0-9]+)\.([0-9]+)\.([0-9]+)/\3/')
-            # Increment the PATCH version
+            major=$(echo "$version" | awk -F'[v.]' '{print $2}')
+            minor=$(echo "$version" | awk -F'[v.]' '{print $3}')
+            patch=$(echo "$version" | awk -F'[v.]' '{print $4}')            # Increment the PATCH version
             patch=$((patch + 1))
             echo $next
             new_version="v$major.$minor.$next"

@@ -43,7 +43,7 @@ jobs:
       - name: Check if repository exists
         id: check_repo
         run: |
-          REPO_NAME="terraform-conf-${{matrix.module}}"
+          REPO_NAME="terraform-${{matrix.module}}"
           RESPONSE=$(gh repo view Apollo-XIV/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
           echo "Repository status: $RESPONSE"
           if [ "$RESPONSE" = "not found" ]; then
@@ -57,14 +57,14 @@ jobs:
       - name: Create repository if it does not exist
         if: env.repo_exists == 'false'
         run: |
-          gh repo create Apollo-XIV/terraform-conf-${{matrix.module}} --public
+          gh repo create Apollo-XIV/terraform-${{matrix.module}} --public
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Add the target repo as a remote
         run: |
           cd git-${{matrix.module}} 
-          git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/terraform-conf-${{matrix.module}}.git
+          git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/terraform-${{matrix.module}}.git
           git fetch ${{matrix.module}}
 
       - name: Push changes

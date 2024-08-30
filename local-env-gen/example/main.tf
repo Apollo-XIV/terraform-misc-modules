@@ -10,3 +10,5 @@ module "env_gen" {
     another = "string"
   }
 }
+
+# this comment is triggering a version rebuild

@@ -56,7 +56,7 @@ jobs:
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ steps.calc_version.outputs.new_version }}
+          tag_name: ${{ env.new_version }}
           release_name: "Release ${{ steps.calc_version.outputs.new_version }}"
           body: "Automated release for version ${{ steps.calc_version.outputs.new_version }}."
           draft: false

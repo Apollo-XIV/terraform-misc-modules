@@ -27,6 +27,8 @@ jobs:
       - name: Copy Module Files
         run: |
           cp -r ${{ matrix.module }} git-${{matrix.module}}
+          cp release-template.yaml git-${{matrix.module}}/.github/workflows/release.yaml
+          
       - name: Git Init
         run: |
           cd git-${{matrix.module}} 

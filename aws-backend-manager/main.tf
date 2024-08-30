@@ -6,8 +6,8 @@ locals {
 }
 
 module "s3_backend" {
-  source  = "Apollo-XIV/backend/s3"
-  version = "0.0.1"
+  source  = "Apollo-XIV/s3-backend/aws"
+  version = "0.0.3"
   prefix  = var.prefix
 
   environments  = var.environments
@@ -16,7 +16,7 @@ module "s3_backend" {
 
 module "env_gen" {
   source       = "Apollo-XIV/env-gen/local"
-  version      = "0.0.5"
+  version      = "0.0.6"
   ENV          = var.ENV
   environments = var.environments
   variables    = var.variables

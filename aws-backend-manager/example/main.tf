@@ -1,8 +1,9 @@
 variable "ENV" {}
 
 module "backend" {
-  source = "Apollo-XIV/backend-manager/aws"
-  prefix = "backend-test"
+  source  = "Apollo-XIV/backend-manager/aws"
+  version = "0.0.2"
+  prefix  = "backend-test"
 
   output_dir = path.root
 

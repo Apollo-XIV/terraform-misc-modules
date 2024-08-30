@@ -3,8 +3,9 @@ locals {
 }
 
 resource "local_file" "vars_tf" {
-  count    = length(var.variables) == 0 ? 0 : 1
-  filename = "${path.root}/env_vars.tf.json"
+  count           = length(var.variables) == 0 ? 0 : 1
+  filename        = "${path.root}/env.tf.json"
+  file_permission = "0444"
   content = jsonencode({
     variable = {
       for key, var in var.variables : key => {
@@ -16,8 +17,9 @@ resource "local_file" "vars_tf" {
 }
 
 resource "local_file" "environment_tfvars" {
-  count    = length(var.variables) == 0 ? 0 : 1
-  filename = "${path.root}/environment.auto.tfvars"
+  count           = length(var.variables) == 0 ? 0 : 1
+  filename        = "${path.root}/env.auto.tfvars"
+  file_permission = "0444"
   content = provider::terraform::encode_tfvars({
     for key, var in var.variables : key => local.env[key]
   })

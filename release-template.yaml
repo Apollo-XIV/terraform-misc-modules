@@ -36,9 +36,13 @@ jobs:
             echo "No tags found, setting version to v0.1.0"
             new_version="v0.1.0"
           else
-            major=$(echo "$latest_tag" | cut -d'.' -f1)
-            minor=$(echo "$latest_tag" | cut -d'.' -f2)
-            next=($(echo "$latest_tag" | cut -d'.' -f3) + 1)
+            major=$(echo "$latest_tag" | cut -d. -f1 | sed 's/v//')
+            minor=$(echo "$latest_tag" | cut -d. -f2)
+            patch=$(echo "$latest_tag" | cut -d. -f3)
+
+            # Increment the PATCH version
+            patch=$((patch + 1))
+            echo $next
             new_version="v$major.$minor.$next"
           fi
           echo "New version: $new_version"

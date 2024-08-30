@@ -36,12 +36,12 @@ jobs:
             echo "No tags found, setting version to v0.1.0"
             new_version="v0.1.0"
           else
-            major=$(echo "$version" | awk -F'[v.]' '{print $2}')
-            minor=$(echo "$version" | awk -F'[v.]' '{print $3}')
-            patch=$(echo "$version" | awk -F'[v.]' '{print $4}')            # Increment the PATCH version
+            major=$(echo "$latest_tag" | awk -F'[v.]' '{print $2}')
+            minor=$(echo "$latest_tag" | awk -F'[v.]' '{print $3}')
+            patch=$(echo "$latest_tag" | awk -F'[v.]' '{print $4}')            # Increment the PATCH version
             patch=$((patch + 1))
-            echo $next
-            new_version="v$major.$minor.$next"
+            echo $patch
+            new_version="v$major.$minor.$patch"
           fi
           echo "New version: $new_version"
           echo "new_version=$new_version" >> $GITHUB_ENV

@@ -41,13 +41,15 @@ jobs:
         id: check_repo
         run: |
           REPO_NAME="${{matrix.module}}"
-          RESPONSE=$(gh repo view Apollo-XIV/$REPO_NAME --json name --jq .name || echo "not found")
+          RESPONSE=$(gh repo view Apollo-XIV/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
           echo "Repository status: $RESPONSE"
           if [ "$RESPONSE" = "not found" ]; then
             echo "repo_exists=false" >> $GITHUB_ENV
           else
             echo "repo_exists=true" >> $GITHUB_ENV
           fi
+        env:
+          GH_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
 
       - name: Create repository if it does not exist
         if: env.repo_exists == 'false'

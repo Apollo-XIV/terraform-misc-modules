@@ -19,23 +19,28 @@ jobs:
 
       - name: Set up Git
         run: |
-          git config --unset-all http.https://github.com/.extraheader
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Add the target repo as a subtree
-        run: |
-          git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{secrets.PERSONAL_ACCESS_TOKEN}}@github.com/Apollo-XIV/${{matrix.module}}.git
-          #     git fetch ${{matrix.module}}
-          git subtree split --prefix=${{matrix.module}} ${{matrix.module}} 2be1bdd|| echo "Subtree already exists, skipping add."
+      - name: Fetch full history to avoid shallow clone issues
+        run: git fetch --unshallow
 
-      - name: Pull latest changes from the target repo
+      - name: Add the target repo as a remote
         run: |
-          git subtree pull --prefix=${{matrix.module}} ${{matrix.module}} main
+          git remote add ${matrix.repo_name} https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/${matrix.repo_name}.git
+          git fetch ${matrix.repo_name}
+
+      - name: Pull from target repo with --allow-unrelated-histories
+        run: |
+          git pull --allow-unrelated-histories ${matrix.repo_name} main
+
+      - name: Add or update the subtree
+        run: |
+          git subtree add --prefix=${matrix.folder_name} ${matrix.repo_name} main --squash || git subtree pull --prefix=${matrix.folder_name} ${matrix.repo_name} main --squash
 
       - name: Push changes back to target repo
         run: |
-          git subtree push --rejoin --prefix=${{matrix.module}} ${{matrix.module}} main
+          git push ${matrix.repo_name} HEAD:main
 
       - name: Clean up remotes
-        run: git remote remove ${{matrix.module}}
+        run: git remote remove ${matrix.repo_name}

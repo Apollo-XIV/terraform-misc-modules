@@ -32,10 +32,10 @@ jobs:
             echo "No tags found, setting version to v0.1.0"
             new_version="v0.1.0"
           else
-            latest_version=${GITHUB_ENV#v}
-            major=$(echo $latest_version | cut -d'.' -f1)
-            minor=$(echo $latest_version | cut -d'.' -f2)
-            patch=$(echo $latest_version | cut -d'.' -f3)
+            latest_version="${GITHUB_ENV#v}"
+            major=$(echo "$latest_version" | cut -d'.' -f1)
+            minor=$(echo "$latest_version" | cut -d'.' -f2)
+            patch=$(echo "$latest_version" | cut -d'.' -f3)
             new_version="v$major.$minor.$((patch + 1))"
           fi
           echo "New version: $new_version"

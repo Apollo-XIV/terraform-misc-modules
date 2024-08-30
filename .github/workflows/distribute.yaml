@@ -27,7 +27,7 @@ jobs:
         run: |
           git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{secrets.PERSONAL_ACCESS_TOKEN}}@github.com/Apollo-XIV/${{matrix.module}}.git
           #     git fetch ${{matrix.module}}
-          git subtree split --prefix=${{matrix.module}} ${{matrix.module}} main --squash || echo "Subtree already exists, skipping add."
+          git subtree split --prefix=${{matrix.module}} ${{matrix.module}} main || echo "Subtree already exists, skipping add."
 
       # - name: Pull latest changes from the target repo
         # run: |

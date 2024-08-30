@@ -14,7 +14,7 @@ terraform {
   }        
       
   backend "s3" {
-    bucket = "backend-test-state-20240830151632434000000001"
+    bucket = "backend-test-state-20240830171211229700000001"
     key    = "backend-test-dev.tfstate"
     region = "eu-west-1"
 

@@ -24,17 +24,17 @@ jobs:
 
       - name: Add the target repo as a subtree
         run: |
-          git remote add ${{matrix.module}} https://github.com/Apollo-XIV/${matrix.module}.git
-          git fetch ${matrix.module}
-          git subtree add --prefix=${matrix.module} ${matrix.module} main --squash || echo "Subtree already exists, skipping add."
+          git remote add ${{matrix.module}} https://github.com/Apollo-XIV/${{matrix.module}}.git
+          git fetch ${{matrix.module}}
+          git subtree add --prefix=${{matrix.module}} ${{matrix.module}} main --squash || echo "Subtree already exists, skipping add."
 
       - name: Pull latest changes from the target repo
         run: |
-          git subtree pull --prefix=${matrix.module} ${matrix.module} main --squash
+          git subtree pull --prefix=${{matrix.module}} ${{matrix.module}} main --squash
 
       - name: Push changes back to target repo
         run: |
-          git subtree push --prefix=${matrix.module} ${matrix.module} main
+          git subtree push --prefix=${{matrix.module}} ${{matrix.module}} main
 
       - name: Clean up remotes
-        run: git remote remove ${matrix.module}
+        run: git remote remove ${{matrix.module}}

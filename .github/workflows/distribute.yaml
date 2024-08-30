@@ -36,16 +36,12 @@ jobs:
         run: |
           cd git-${{matrix.module}} 
           git init
-      - name: Set up GitHub CLI
-        uses: github/gh-cli-action@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check if repository exists
         id: check_repo
         run: |
-          REPO_NAME="my-repo"
-          RESPONSE=$(gh repo view my-username/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
+          REPO_NAME="${{matrix.module}}"
+          RESPONSE=$(gh repo view Apollo-XIV/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
           echo "Repository status: $RESPONSE"
           if [ "$RESPONSE" = "not found" ]; then
             echo "::set-output name=repo_exists::false"
@@ -56,9 +52,9 @@ jobs:
       - name: Create repository if it does not exist
         if: steps.check_repo.outputs.repo_exists == 'false'
         run: |
-          gh repo create my-username/my-repo --public --confirm
+          gh repo create Apollo-XIV/${{matrix.module}} --public --confirm
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Add the target repo as a remote
         run: |

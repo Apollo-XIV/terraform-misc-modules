@@ -28,11 +28,12 @@ jobs:
       - name: Calculate next version
         id: calc_version
         run: |
-          if [ -z "$GITHUB_ENV" ]; then
+          latest_tag=${{env.latest_tag}}
+          if [ -z "$latest_tag" ]; then
             echo "No tags found, setting version to v0.1.0"
             new_version="v0.1.0"
           else
-            latest_version="${GITHUB_ENV#v}"
+            latest_tag="${GITHUB_ENV#v}"
             major=$(echo "$latest_tag" | cut -d'.' -f1)
             minor=$(echo "$latest_tag" | cut -d'.' -f2)
             next=($(echo "$latest_tag" | cut -d'.' -f3) + 1)

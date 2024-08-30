@@ -27,7 +27,24 @@ jobs:
           git config --global user.email "actions@github.com"
           git config pull.rebase false
 
+      - name: Determine changes in folder
+        id: changes
+        run: |
+          # Check if there are any changes in the specified folder
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+          echo "Changed files: $CHANGED_FILES"
+          
+          # Check if any file in the specified folder has changed
+          if echo "$CHANGED_FILES" | grep -q "^${{ matrix.folder }}/"; then
+            echo "Files changed in ${{ matrix.folder }}"
+            echo "folder_changed=true" >> $GITHUB_ENV
+          else
+            echo "No files changed in ${{ matrix.folder }}"
+            echo "folder_changed=false" >> $GITHUB_ENV
+          fi
+      
       - name: Copy Module Files
+        if: env.folder_changed == 'true'
         run: |
           cp -r ${{ matrix.module }} git-${{matrix.module}}
           mkdir -p git-${{matrix.module}}/.github/workflows
@@ -36,12 +53,14 @@ jobs:
       ## Idempotently Create Repo
           
       - name: Git Init
+        if: env.folder_changed == 'true'
         run: |
           cd git-${{matrix.module}} 
           git init
 
       - name: Check if repository exists
         id: check_repo
+        if: env.folder_changed == 'true'
         run: |
           REPO_NAME="terraform-${{matrix.module}}"
           RESPONSE=$(gh repo view Apollo-XIV/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
@@ -55,19 +74,21 @@ jobs:
           GH_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
 
       - name: Create repository if it does not exist
-        if: env.repo_exists == 'false'
+        if: env.repo_exists == 'false' and env.folder_changed == 'true'
         run: |
           gh repo create Apollo-XIV/terraform-${{matrix.module}} --public
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Add the target repo as a remote
+        if: env.folder_changed == 'true'
         run: |
           cd git-${{matrix.module}} 
           git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/terraform-${{matrix.module}}.git
           git fetch ${{matrix.module}}
 
       - name: Push changes
+        if: env.folder_changed == 'true'
         run: |
           cd git-${{matrix.module}} 
           git branch -m main
@@ -77,6 +98,7 @@ jobs:
           git push --force -u ${{matrix.module}} main
 
       - name: Clean up remotes
+        if: env.folder_changed == 'true'
         run: | 
           cd git-${{matrix.module}} 
           git remote remove ${{matrix.module}}

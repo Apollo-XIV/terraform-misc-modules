@@ -29,11 +29,36 @@ jobs:
           cp -r ${{ matrix.module }} git-${{matrix.module}}
           mkdir -p git-${{matrix.module}}/.github/workflows
           cp release-template.yaml git-${{matrix.module}}/.github/workflows/release.yaml
+
+      ## Idempotently Create Repo
           
       - name: Git Init
         run: |
           cd git-${{matrix.module}} 
           git init
+      - name: Set up GitHub CLI
+        uses: github/gh-cli-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if repository exists
+        id: check_repo
+        run: |
+          REPO_NAME="my-repo"
+          RESPONSE=$(gh repo view my-username/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
+          echo "Repository status: $RESPONSE"
+          if [ "$RESPONSE" = "not found" ]; then
+            echo "::set-output name=repo_exists::false"
+          else
+            echo "::set-output name=repo_exists::true"
+          fi
+
+      - name: Create repository if it does not exist
+        if: steps.check_repo.outputs.repo_exists == 'false'
+        run: |
+          gh repo create my-username/my-repo --public --confirm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add the target repo as a remote
         run: |

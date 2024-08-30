@@ -1,3 +1,5 @@
+name: Distribute Changes
+
 on: 
   push:
     branches:
@@ -10,9 +12,10 @@ jobs:
     strategy:
       matrix:
         module: ['terraform-backend-manager']
+
     steps:
       - name: Checkout main repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Git
         run: |
@@ -21,7 +24,7 @@ jobs:
 
       - name: Add the target repo as a subtree
         run: |
-          git remote add ${matrix.module} https://github.com/Apollo-XIV/${matrix.module}.git
+          git remote add ${{matrix.module}} https://github.com/Apollo-XIV/${matrix.module}.git
           git fetch ${matrix.module}
           git subtree add --prefix=${matrix.module} ${matrix.module} main --squash || echo "Subtree already exists, skipping add."
 

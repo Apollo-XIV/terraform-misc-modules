@@ -45,7 +45,7 @@ jobs:
           # git checkout main
           git add .
           git commit -m 'chore: distribute module'
-          git push --force --set-upstream ${{matrix.module}} main
+          git push --force --set-upstream https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/${{matrix.module}}.git main
 
       # - name: Pull from target repo with --allow-unrelated-histories
       #   run: |

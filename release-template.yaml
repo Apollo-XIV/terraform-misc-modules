@@ -31,7 +31,7 @@ jobs:
       - name: Calculate next version
         id: calc_version
         run: |
-          latest_tag=${{env.latest_tag}}
+          latest_tag="${{env.latest_tag}}"
           if [ -z "$latest_tag" ]; then
             echo "No tags found, setting version to v0.1.0"
             new_version="v0.1.0"

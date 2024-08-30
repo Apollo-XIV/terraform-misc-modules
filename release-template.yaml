@@ -35,8 +35,8 @@ jobs:
             latest_version="${GITHUB_ENV#v}"
             major=$(echo "$latest_version" | cut -d'.' -f1)
             minor=$(echo "$latest_version" | cut -d'.' -f2)
-            next=$(echo "$latest_version" | cut -d'.' -f3)
-            new_version="v$major.$minor.$($next + 1)"
+            next=($(echo "$latest_version" | cut -d'.' -f3) + 1)
+            new_version="v$major.$minor.$next"
           fi
           echo "New version: $new_version"
           echo "new_version=$new_version" >> $GITHUB_ENV

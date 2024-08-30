@@ -48,7 +48,9 @@ jobs:
           git push --force -u ${{matrix.module}} main
 
       - name: Clean up remotes
-        run: git remote remove ${{matrix.module}}
+        run: | 
+          cd git-${{matrix.module}} 
+          git remote remove ${{matrix.module}}
 
       # - name: Pull from target repo with --allow-unrelated-histories
       #   run: |

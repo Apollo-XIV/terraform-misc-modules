@@ -12,9 +12,9 @@ jobs:
     strategy:
       matrix:
         module:
-          - backend_manager
-          - s3_backend
-          - env_gen
+          - aws-backend-manager
+          - s3-backend
+          - local-env-gen
 
     steps:
       - name: Checkout main repository

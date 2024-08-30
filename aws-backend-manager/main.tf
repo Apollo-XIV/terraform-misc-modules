@@ -6,8 +6,9 @@ locals {
 }
 
 module "s3_backend" {
-  source = "../s3_backend"
-  prefix = var.prefix
+  source  = "Apollo-XIV/backend_manager/conf"
+  version = "0.0.1"
+  prefix  = var.prefix
 
   environments  = var.environments
   approved_arns = var.approved_arns

@@ -38,11 +38,11 @@ jobs:
           echo "Changed files: $CHANGED_FILES"
           
           # Check if any file in the specified folder has changed
-          if echo "$CHANGED_FILES" | grep -q "^${{ matrix.folder }}/"; then
-            echo "Files changed in ${{ matrix.folder }}"
+          if echo "$CHANGED_FILES" | grep -q "^${{ matrix.module }}/"; then
+            echo "Files changed in ${{ matrix.module }}"
             echo "folder_changed=true" >> $GITHUB_ENV
           else
-            echo "No files changed in ${{ matrix.folder }}"
+            echo "No files changed in ${{ matrix.module }}"
             echo "folder_changed=false" >> $GITHUB_ENV
           fi
       

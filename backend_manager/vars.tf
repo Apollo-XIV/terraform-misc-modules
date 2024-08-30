@@ -1,26 +1,61 @@
-
 variable "prefix" {
   type        = string
   description = "string used to prefix resource names and identify the project a resource belongs to"
 }
-
 variable "environments" {
   type        = list(string)
   description = "A list of possible environments"
+}
+
+variable "output_dir" {
+  type        = string
+  description = "The directory to place the output files (backend.tf, environment.auto.tfvars, & env_vars.tf.json)"
+}
+
+variable "environment_configs_dir" {
+  type        = string
+  description = "The directory where ENV-environment.yaml files are stored"
+  default     = "."
+}
+
+variable "variables" {
+  type        = map(string)
+  description = "A map of variable names and types (string formatted)"
+  default     = {}
 }
 
 variable "approved_arns" {
   type = list(string)
 }
 
-output "bucket" {
-  value = aws_s3_bucket.state.bucket
+variable "ENV" {
+  type        = string
+  description = "Environment name to setup backend for, typically set using TF_VAR_ENV"
+  validation {
+    condition     = contains(var.environments, var.ENV)
+    error_message = "Please make sure ENV is one of the approved values: [\n${join(",\n", [for v in var.environments : "    ${v}"])}\n]"
+  }
 }
 
-output "lock_tables" {
-  value = { for k, v in aws_dynamodb_table.locking : k => v.arn }
+variable "required_version" {
+  default     = ">=1.9.5"
+  type        = string
+  description = "The required terraform version"
+}
+
+variable "required_providers" {
+  default = {
+    aws = {
+      version = ">=5.60.0"
+      source  = "hashicorp/aws"
+    }
+  }
+  type = map(object({
+    source  = string
+    version = string
+  }))
 }
 
 output "role_arn" {
-  value = aws_iam_role.iac_role.arn
+  value = local.role_arn
 }

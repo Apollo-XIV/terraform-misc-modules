@@ -41,6 +41,10 @@ jobs:
       - name: Push changes
         run: |
           cd git-${{matrix.module}} 
+          git branch main
+          git checkout main
+          git add .
+          git commit -m 'chore: distribute module'
           git push --force --set-upstream ${{matrix.module}} main
 
       # - name: Pull from target repo with --allow-unrelated-histories

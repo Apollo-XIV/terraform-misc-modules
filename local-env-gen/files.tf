@@ -3,6 +3,7 @@ locals {
   values = {
     for k, v in var.variables : k =>
       local.env[k]
+  }
 }
 
 resource "local_file" "vars_tf" {

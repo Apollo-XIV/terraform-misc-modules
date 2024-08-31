@@ -16,10 +16,15 @@ module "s3_backend" {
 
 module "env_gen" {
   source       = "Apollo-XIV/env-gen/local"
-  version      = "0.0.10"
+  version      = "0.0.14"
   ENV          = var.ENV
   environments = var.environments
-  variables    = var.variables
+  variables    = merge(var.variables, {
+    role_arn = "string"
+  })
+  passthrough  = {
+    role_arn = module.s3_backend.role_arn
+  }
 
   environment_configs_dir = var.environment_configs_dir
   output_dir              = var.output_dir

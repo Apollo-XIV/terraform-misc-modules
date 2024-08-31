@@ -16,7 +16,7 @@ module "s3_backend" {
 
 module "env_gen" {
   source       = "Apollo-XIV/env-gen/local"
-  version      = "0.0.14"
+  version      = "0.0.19"
   ENV          = var.ENV
   environments = var.environments
   variables    = merge(var.variables, {

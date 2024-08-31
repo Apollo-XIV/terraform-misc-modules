@@ -28,3 +28,8 @@ variable "variables" {
   description = "A map of variable names and types (string formatted)"
   default     = {}
 }
+
+variable "passthrough" {
+  type = map(any)
+  default = {}
+}

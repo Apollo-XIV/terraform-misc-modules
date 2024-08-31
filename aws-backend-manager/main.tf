@@ -23,7 +23,7 @@ module "env_gen" {
     role_arn = "string"
   })
   passthrough  = {
-    role_arn = module.s3_backend.role_arn
+    role_arn = local.role_arn
   }
 
   environment_configs_dir = var.environment_configs_dir

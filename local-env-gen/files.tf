@@ -2,7 +2,7 @@ locals {
   env = merge(try(yamldecode(file("${var.environment_configs_dir}/${var.ENV}-environment.yaml")), {}), var.passthrough)
   values = {
     for k, v in var.variables : k =>
-      local.env[key]
+      local.env[k]
 }
 
 resource "local_file" "vars_tf" {

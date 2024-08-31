@@ -1,5 +1,5 @@
 locals {
-  env = merge(try(yamldecode(file("${var.environment_configs_dir}/${var.ENV}-environment.yaml")), {}), var.passthrough)
+  env = tomap(merge(try(yamldecode(file("${var.environment_configs_dir}/${var.ENV}-environment.yaml")), {}), var.passthrough))
   values = {
     for k, v in var.variables : k =>
       local.env[k]

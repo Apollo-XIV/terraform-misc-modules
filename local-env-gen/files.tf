@@ -1,5 +1,10 @@
 locals {
   env = try(yamldecode(file("${var.environment_configs_dir}/${var.ENV}-environment.yaml")), {})
+  values = {
+    for k, v in var.variables : k => try(
+      var.passthrough[key],
+      local.env[key]
+    )
 }
 
 resource "local_file" "vars_tf" {
@@ -20,7 +25,5 @@ resource "local_file" "environment_tfvars" {
   count           = length(var.variables) == 0 ? 0 : 1
   filename        = "${path.root}/env.auto.tfvars"
   file_permission = "0444"
-  content = provider::terraform::encode_tfvars({
-    for key, var in var.variables : key => local.env[key]
-  })
+  content = provider::terraform::encode_tfvars(local.values)
 }

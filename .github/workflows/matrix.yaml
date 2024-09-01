@@ -24,7 +24,7 @@ jobs:
         id: changes
         with:
           filters: |
-            matrix.module:
+            module:
               - '${{matrix.module}}/**'
 
       - name: Run distribution workflow

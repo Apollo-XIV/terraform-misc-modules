@@ -19,10 +19,9 @@ jobs:
         uses: ./.github/actions/changes
 
   organise-jobs:
-    if: ${{ !contains(needs.changes.outputs.changed_dirs, '') }} 
-    needs:
-      - changes
     name: Distribute on change
+    needs: changes
+    if: ${{ !contains(needs.changes.outputs.changed_dirs, '') }} 
     strategy:
       matrix:
         module: ${{ fromJSON(needs.changes.outputs.changed_dirs) }}

@@ -3,7 +3,7 @@ description: Distribute the changes in modules to their respective modules
 outputs:
   changed_dirs:
     description: Array of changed directories
-    value: ${{steps.changed_dirs.outputs.changed_dirs}}
+    value: ${{ steps.changed_dirs.outputs.changed_dirs }}
 runs:
   using: "composite"
   steps:
@@ -27,7 +27,7 @@ runs:
         if [ -n "$FILTERED_DIRS" ]; then
           TOP_LEVEL_DIRS=$(echo "$FILTERED_DIRS" | jq -R -s -c 'split("\n")[:-1]')
         else
-          TOP_LEVEL_DIRS='[]'
+          TOP_LEVEL_DIRS=''
         fi
         echo $TOP_LEVEL_DIRS
         echo "changed_dirs=$TOP_LEVEL_DIRS" >> "$GITHUB_OUTPUT"

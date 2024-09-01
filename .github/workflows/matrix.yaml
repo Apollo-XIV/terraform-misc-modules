@@ -17,7 +17,7 @@ jobs:
           - aws-s3-backend
           - local-env-gen
     steps:
-      - uses: actions/checkout@v4
+
       - name: Path filter
         uses: dorny/paths-filter@v3
         id: changes
@@ -25,6 +25,10 @@ jobs:
           filters: |
             module:
               - '${{matrix.module}}/**'
+
+      - name: Checkout
+        if: steps.changes.outputs.module == 'true'
+        uses: actions/checkout@v4
 
       - name: Run distribution workflow
         if: steps.changes.outputs.module == 'true'

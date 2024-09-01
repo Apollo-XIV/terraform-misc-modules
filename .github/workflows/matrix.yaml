@@ -8,6 +8,7 @@ on:
 
 jobs:
   organise-jobs:
+    name: Distribute on chang
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -23,7 +24,7 @@ jobs:
         with:
           filters: |
             module:
-              - ${{inputs.module}}  
+              - ${{matrix.module}}  
 
       - name: Run distribution workflow
         if: steps.changes.outputs.module == 'true'

@@ -19,7 +19,7 @@ jobs:
         uses: ./.github/actions/changes
 
   organise-jobs:
-    if: ${{ !contains(needs.changes.outputs.changed_dirs, '[]') }} 
+    if: ${{ !contains(needs.changes.outputs.changed_dirs, '') }} 
     needs:
       - changes
     name: Distribute on change

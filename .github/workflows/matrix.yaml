@@ -20,7 +20,7 @@ jobs:
   organise-jobs:
     name: Distribute on change
     needs: changes
-    if: ${{ !contains(needs.changes.outputs.changed_dirs,[]) }} 
+    if: ${{ !contains(needs.changes.outputs.changed_dirs,'') }} 
     strategy:
       matrix:
         module: ${{ fromJSON(needs.changes.outputs.changed_dirs) }}

@@ -7,30 +7,42 @@ on:
       - main
 
 jobs:
-  organise-jobs:
-    name: Distribute on change
+  changes:
     runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
     strategy:
       matrix:
         module: 
           - aws-backend-manager
           - aws-s3-backend
           - local-env-gen
+    # Set job outputs to values from filter step
+    outputs:
+      module: ${{ steps.filter.outputs.module}}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Path filter
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            module:
-              - '${{matrix.module}}/**'
-
-      - name: Run distribution workflow
-        if: steps.changes.outputs.module == 'true'
-        # uses: ./.github/actions/distribute
-        uses: ./.github/workflows/distribute.yaml
-        with:
-          module: ${{matrix.module}}
-          PERSONAL_ACCESS_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+    # For pull requests it's not necessary to checkout the code
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          module:
+            - '${{matrix.module}}/**'
+  organise-jobs:
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.module == 'true' }}
+    name: Distribute on change
+    strategy:
+      matrix:
+        module: 
+          - aws-backend-manager
+          - aws-s3-backend
+          - local-env-gen
+    # uses: ./.github/actions/distribute
+    uses: ./.github/workflows/distribute.yaml
+    with:
+      module: ${{matrix.module}}
+      # PERSONAL_ACCESS_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+    secrets: inherit

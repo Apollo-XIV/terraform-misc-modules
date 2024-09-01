@@ -42,7 +42,7 @@ jobs:
     name: Distribute on change
     strategy:
       matrix:
-        module: ${{ fromJSON(needs.define-matrix.outputs.changed_dirs) }}
+        module: ${{ fromJSON(needs.changes.outputs.changed_dirs) }}
     # uses: ./.github/actions/distribute
     uses: ./.github/workflows/distribute.yaml
     with:

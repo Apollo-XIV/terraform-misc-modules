@@ -8,7 +8,7 @@ on:
 
 jobs:
   organise-jobs:
-    name: Distribute on chang
+    name: Distribute on change
     runs-on: ubuntu-latest
     strategy:
       matrix:

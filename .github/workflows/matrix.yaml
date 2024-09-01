@@ -17,6 +17,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - run: git fetch --prune --unshallow
+
       - name: Define and Filter Top-Level Changed Folders
         id: changed_dirs
         run: |

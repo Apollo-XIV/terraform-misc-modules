@@ -9,6 +9,7 @@ on:
 jobs:
   changes:
     runs-on: ubuntu-latest
+    name: Detect module changes
     # Required permissions
     permissions:
       pull-requests: read

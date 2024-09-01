@@ -1,21 +1,18 @@
 name: Distribute Changes
 
 on: 
+  workflow_call:
+    inputs:
+      module:
+        required: true
+        type: true
   push:
     branches:
       - main
 
 jobs:
-  distribute-module:
+  check-changes:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        module:
-          - aws-backend-manager
-          - aws-s3-backend
-          - local-env-gen
-
     steps:
       - name: Checkout main repository
         uses: actions/checkout@v4
@@ -28,8 +25,8 @@ jobs:
           git config pull.rebase false
 
       - name: Fetch
-        run: git fetch --prune --unshallow
-
+        # run: git fetch --prune --unshallow
+      
       - name: Determine changes in folder
         id: changes
         run: |
@@ -45,6 +42,51 @@ jobs:
             echo "No files changed in ${{ matrix.module }}"
             echo "folder_changed=false" >> $GITHUB_ENV
           fi
+  
+  prepare-repo:
+    runs-on: ubuntu-latest
+    if: env.folder_changed == 'true'
+    needs: check-changes
+    steps:
+      - name: Check if repository exists
+        id: check_repo
+        run: |
+          REPO_NAME="terraform-${{matrix.module}}"
+          RESPONSE=$(gh repo view Apollo-XIV/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
+          echo "Repository status: $RESPONSE"
+          if [ "$RESPONSE" = "not found" ]; then
+            echo "repo_exists=false" >> $GITHUB_ENV
+          else
+            echo "repo_exists=true" >> $GITHUB_ENV
+          fi
+        env:
+          GH_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+
+      - name: Create repository if it does not exist
+        if: env.repo_exists == 'false'
+        run: |
+          gh repo create Apollo-XIV/terraform-${{matrix.module}} --public
+        env:
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+  
+  distribute-module:
+    runs-on: ubuntu-latest
+    if: env.folder_changed == 'true'
+    needs: prepare-repo
+    steps:
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --unset-all http.https://github.com/.extraheader
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git config pull.rebase false
+
+      - name: Fetch
+        run: git fetch --prune --unshallow
+
       
       - name: Copy Module Files
         if: env.folder_changed == 'true'
@@ -60,35 +102,6 @@ jobs:
         run: |
           cd git-${{matrix.module}} 
           git init
-
-      - name: Check if repository exists
-        id: check_repo
-        if: env.folder_changed == 'true'
-        run: |
-          REPO_NAME="terraform-${{matrix.module}}"
-          RESPONSE=$(gh repo view Apollo-XIV/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
-          echo "Repository status: $RESPONSE"
-          if [ "$RESPONSE" = "not found" ]; then
-            echo "repo_exists=false" >> $GITHUB_ENV
-          else
-            echo "repo_exists=true" >> $GITHUB_ENV
-          fi
-        env:
-          GH_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-
-      - name: Create repository if it does not exist
-        if: env.repo_exists == 'false' && env.folder_changed == 'true'
-        run: |
-          gh repo create Apollo-XIV/terraform-${{matrix.module}} --public
-        env:
-          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-
-      - name: Add the target repo as a remote
-        if: env.folder_changed == 'true'
-        run: |
-          cd git-${{matrix.module}} 
-          git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/terraform-${{matrix.module}}.git
-          git fetch ${{matrix.module}}
 
       - name: Push changes
         if: env.folder_changed == 'true'

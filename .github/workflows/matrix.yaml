@@ -1,0 +1,20 @@
+
+name: Organise Jobs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  distribute-jobs:
+    uses: ./.github/workflows/distribute.yaml
+    strategy:
+      matrix:
+        module: 
+          - aws-backend-manager
+          - aws-s3-backend
+          - local-env-gen
+    with:
+      module: ${{matrix.module}}
+    secrets: inherit

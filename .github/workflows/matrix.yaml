@@ -29,6 +29,6 @@ jobs:
 
       - name: Run distribution workflow
         if: steps.changes.outputs.module == 'true'
-        uses: .github/workflows/distribute.yaml
+        uses: ./.github/workflows/distribute.yaml
         with:
           module: ${{matrix.module}}

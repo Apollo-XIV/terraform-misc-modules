@@ -18,15 +18,15 @@ runs:
         RESPONSE=$(gh repo view Apollo-XIV/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
         echo "Repository status: $RESPONSE"
         if [ "$RESPONSE" = "not found" ]; then
-          echo "repo_exists=false" >> $GITHUB_OUTPUT
+          echo "repo_doesnt_exist=true" >> $GITHUB_OUTPUT
         else
-          echo "repo_exists=true" >> $GITHUB_OUTPUT
+          echo "repo_doesnt_exist=false" >> $GITHUB_OUTPUT
         fi
       env:
         GH_TOKEN: ${{inputs.PERSONAL_ACCESS_TOKEN}}
 
     - name: Create repository if it does not exist
-      if: ${{steps.check_repo.outputs.repo_exists}} == 'false'
+      if: ${{env.repo_doesnt_exist}} == 'true'
       shell: bash
       run: |
         gh repo create Apollo-XIV/terraform-${{inputs.module}} --public

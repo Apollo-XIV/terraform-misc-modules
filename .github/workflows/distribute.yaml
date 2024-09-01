@@ -11,47 +11,28 @@ on:
   #     - main
 
 jobs:
-  check-changes:
+  paths-filter:
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.filter.outputs.module}}
     steps:
-      - name: Checkout main repository
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          module:
+            - ${{inputs.module}}  
 
-      - name: Set up Git
-        run: |
-          git config --unset-all http.https://github.com/.extraheader
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git config pull.rebase false
-
-      - name: Fetch
-        run: git fetch --prune --unshallow
-      
-      - name: Determine changes in folder
-        id: changes
-        run: |
-          # Check if there are any changes in the specified folder
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
-          echo "Changed files: $CHANGED_FILES"
-          
-          # Check if any file in the specified folder has changed
-          if echo "$CHANGED_FILES" | grep -q "^${{ matrix.module }}/"; then
-            echo "Files changed in ${{ matrix.module }}"
-            echo "folder_changed=true" >> $GITHUB_ENV
-          else
-            echo "No files changed in ${{ matrix.module }}"
-            echo "folder_changed=false" >> $GITHUB_ENV
-          fi
-  
   prepare-repo:
     runs-on: ubuntu-latest
-    if: env.folder_changed == 'true'
     needs: check-changes
+    if: needs.check-changes.outputs.output1 == 'true'
     steps:
       - name: Check if repository exists
         id: check_repo
         run: |
-          REPO_NAME="terraform-${{matrix.module}}"
+          REPO_NAME="terraform-${{inputs.module}}"
           RESPONSE=$(gh repo view Apollo-XIV/$REPO_NAME --json name --jq .name 2>/dev/null || echo "not found")
           echo "Repository status: $RESPONSE"
           if [ "$RESPONSE" = "not found" ]; then
@@ -63,16 +44,17 @@ jobs:
           GH_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
 
       - name: Create repository if it does not exist
-        if: env.repo_exists == 'false'
         run: |
-          gh repo create Apollo-XIV/terraform-${{matrix.module}} --public
+          gh repo create Apollo-XIV/terraform-${{inputs.module}} --public
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
   
   distribute-module:
     runs-on: ubuntu-latest
-    if: env.folder_changed == 'true'
-    needs: prepare-repo
+    if: needs.check-changes.outputs.output1 == 'true'
+    needs: 
+      - check-changes
+      - prepare-repo
     steps:
       - name: Checkout main repository
         uses: actions/checkout@v4
@@ -90,28 +72,28 @@ jobs:
       
       - name: Copy Module Files
         run: |
-          cp -r ${{ matrix.module }} git-${{matrix.module}}
-          mkdir -p git-${{matrix.module}}/.github/workflows
-          cp release-template.yaml git-${{matrix.module}}/.github/workflows/release.yaml
+          cp -r ${{ inputs.module }} git-${{inputs.module}}
+          mkdir -p git-${{inputs.module}}/.github/workflows
+          cp release-template.yaml git-${{inputs.module}}/.github/workflows/release.yaml
 
       ## Idempotently Create Repo
           
       - name: Git Init
         run: |
-          cd git-${{matrix.module}} 
+          cd git-${{inputs.module}} 
           git init
 
       - name: Push changes
         run: |
-          cd git-${{matrix.module}} 
+          cd git-${{inputs.module}} 
           git branch -m main
           # git checkout main
           git add .
           git commit -m 'chore: distribute module'
-          git push --force -u ${{matrix.module}} main
+          git push --force -u ${{inputs.module}} main
 
       - name: Clean up remotes
         run: | 
-          cd git-${{matrix.module}} 
-          git remote remove ${{matrix.module}}
+          cd git-${{inputs.module}} 
+          git remote remove ${{inputs.module}}
 

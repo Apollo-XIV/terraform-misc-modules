@@ -19,6 +19,7 @@ jobs:
 
   debug:
     name: Debug step
+    needs: changes
     runs-on: ubuntu-latest
     steps:
       - run: echo $DIRS

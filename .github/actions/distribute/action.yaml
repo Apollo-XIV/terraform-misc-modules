@@ -8,6 +8,8 @@ on:
 jobs:
   prepare-repo:
     runs-on: ubuntu-latest
+    needs: check-changes
+    if: needs.check-changes.outputs.output1 == 'true'
     steps:
       - name: Check if repository exists
         id: check_repo
@@ -24,7 +26,6 @@ jobs:
           GH_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
 
       - name: Create repository if it does not exist
-        if: env.repo_exists == 'false'
         run: |
           gh repo create Apollo-XIV/terraform-${{inputs.module}} --public
         env:
@@ -40,7 +41,9 @@ jobs:
   
   distribute-module:
     runs-on: ubuntu-latest
+    if: needs.check-changes.outputs.output1 == 'true'
     needs: 
+      - check-changes
       - prepare-repo
     steps:
       - name: Checkout main repository

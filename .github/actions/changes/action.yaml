@@ -1,0 +1,33 @@
+name: Distribute Changes
+description: Distribute the changes in modules to their respective modules
+outputs:
+  changed_dirs:
+    description: Array of changed directories
+    value: ${{steps.changed_dirs.outputs.changed_dirs}}
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - shell: bash
+      run: git fetch --prune --unshallow
+
+    - name: Define and Filter Top-Level Changed Folders
+      id: changed_dirs
+      shell: bash
+      run: |
+        # Get the list of top-level directories that changed in the last commit
+        # Filter directories by pattern: values interspersed by hyphens
+        # Convert the filtered list to a JSON array format
+        CHANGED_DIRS=$(git diff --name-only HEAD~1 HEAD | awk -F/ '{print $1}' | sort | uniq)
+        echo $CHANGED_DIRS
+        FILTERED_DIRS=$(echo "$CHANGED_DIRS" | grep -E '^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)+$' || true)
+        echo $FILTERED_DIRS
+        if [ -n "$FILTERED_DIRS" ]; then
+          TOP_LEVEL_DIRS=$(echo "$FILTERED_DIRS" | jq -R -s -c 'split("\n")[:-1]')
+        else
+          TOP_LEVEL_DIRS=[]
+        fi
+        echo $TOP_LEVEL_DIRS
+        echo "changed_dirs=$TOP_LEVEL_DIRS" >> "$GITHUB_OUTPUT"

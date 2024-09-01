@@ -4,6 +4,9 @@ inputs:
   module:
     description: which module/folder to distribute
     required: true
+  PERSONAL_ACCESS_TOKEN:
+    description: PAT used to auth github requests
+    required: true
 runs:
   using: "composite"
   steps:
@@ -20,14 +23,14 @@ runs:
           echo "repo_exists=true" >> $GITHUB_ENV
         fi
       env:
-        GH_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+        GH_TOKEN: ${{inputs.PERSONAL_ACCESS_TOKEN}}
 
     - name: Create repository if it does not exist
       shell: bash
       run: |
         gh repo create Apollo-XIV/terraform-${{inputs.module}} --public
       env:
-        GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        GH_TOKEN: ${{ inputs.PERSONAL_ACCESS_TOKEN }}
 
   # validate-code:
   #   runs-on: ubuntu-latest

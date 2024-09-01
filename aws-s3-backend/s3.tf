@@ -5,7 +5,7 @@ resource "aws_s3_bucket" "state" {
   #   prevent_destroy = true
   # }
 }
-# triggering
+# trigger
 
 resource "aws_s3_bucket_versioning" "enabled" {
   bucket = aws_s3_bucket.state.id

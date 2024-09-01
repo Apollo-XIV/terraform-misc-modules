@@ -23,12 +23,12 @@ jobs:
         id: changed_dirs
         run: |
           # Get the list of top-level directories that changed in the last commit
+          # Filter directories by pattern: values interspersed by hyphens
+          # Convert the filtered list to a JSON array format
           CHANGED_DIRS=$(git diff --name-only HEAD~1 HEAD | awk -F/ '{print $1}' | sort | uniq)
           echo $CHANGED_DIRS
-          # Filter directories by pattern: values interspersed by hyphens
-          FILTERED_DIRS=$(echo "$CHANGED_DIRS" | grep -E '^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)+$')
+          FILTERED_DIRS=$(echo "$CHANGED_DIRS" | grep -E '^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)+$' || true)
           echo $FILTERED_DIRS
-          # Convert the filtered list to a JSON array format
           if [ -n "$FILTERED_DIRS" ]; then
             TOP_LEVEL_DIRS=$(echo "$FILTERED_DIRS" | jq -R -s -c 'split("\n")[:-1]')
           else

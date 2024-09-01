@@ -17,15 +17,6 @@ jobs:
       - id: changes
         uses: ./.github/actions/changes
 
-  debug:
-    name: Debug step
-    needs: changes
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo $DIRS
-        env:
-          DIRS: ${{needs.changes.outputs.changed_dirs}}
-
   organise-jobs:
     name: Distribute on change
     needs: changes

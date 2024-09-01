@@ -10,14 +10,14 @@ jobs:
     name: Detect module changes
     runs-on: ubuntu-latest
     outputs:
-      changed_dirs: steps.path-check.outputs.changed_dirs
+      changed_dirs: steps.path_check.outputs.changed_dirs
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - id: path-check
+      - id: path_check
         uses: ./.github/actions/changes
-    
+
   organise-jobs:
     if: ${{ !contains(needs.changes.outputs.changed_dirs, '[]') }} 
     needs:

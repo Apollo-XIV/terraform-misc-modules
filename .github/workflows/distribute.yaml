@@ -24,7 +24,7 @@ jobs:
           GH_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
 
       - name: Create repository if it does not exist
-        if: ${{ env.repo_exists }} == 'false'
+        if: ${{ env.repo_exists == 'false' }}
         run: |
           gh repo create Apollo-XIV/terraform-${{inputs.module}} --public
         env:

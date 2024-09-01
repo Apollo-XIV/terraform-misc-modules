@@ -37,7 +37,7 @@ jobs:
           echo $TOP_LEVEL_DIRS
           echo "changed_dirs=$TOP_LEVEL_DIRS" >> "$GITHUB_OUTPUT"
   organise-jobs:
-    if: ${{ fromJSON(needs.changes.outputs.chanded_dirs) }} != []
+    if: ${{ needs.changes.outputs.chanded_dirs }} != "[]"
     needs:
       - changes
     name: Distribute on change

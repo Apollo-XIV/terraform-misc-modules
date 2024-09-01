@@ -72,7 +72,7 @@ runs:
       run: |
         cd git-${{inputs.module}} 
         git init
-        git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/terraform-${{matrix.module}}.git
+        git remote add ${{matrix.module}} https://$GITHUB_ACTOR:${{ inputs.PERSONAL_ACCESS_TOKEN }}@github.com/Apollo-XIV/terraform-${{matrix.module}}.git
         git fetch ${{matrix.module}}
 
     - name: Push changes

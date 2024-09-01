@@ -7,14 +7,26 @@ on:
       - main
 
 jobs:
-  distribute-jobs:
-    uses: ./.github/workflows/distribute.yaml
+  organise-jobs:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         module: 
           - aws-backend-manager
           - aws-s3-backend
           - local-env-gen
-    with:
-      module: ${{matrix.module}}
-    secrets: inherit
+    steps:
+      - uses: actions/checkout@v4
+      - name: Path filter
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            module:
+              - ${{inputs.module}}  
+
+      - name: Run distribution workflow
+        if: steps.changes.outputs.module == 'true'
+        uses: ./.github/workflows/distribute.yaml
+        with:
+          module: ${{matrix.module}}

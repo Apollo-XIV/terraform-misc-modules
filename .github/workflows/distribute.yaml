@@ -11,19 +11,6 @@ on:
   #     - main
 
 jobs:
-  check-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      output1: ${{ steps.filter.outputs.module}}
-    steps:
-    - uses: actions/checkout@v4
-    - uses: dorny/paths-filter@v3
-      id: filter
-      with:
-        filters: |
-          module:
-            - ${{inputs.module}}  
-
   prepare-repo:
     runs-on: ubuntu-latest
     needs: check-changes

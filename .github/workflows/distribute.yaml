@@ -48,6 +48,14 @@ jobs:
           gh repo create Apollo-XIV/terraform-${{inputs.module}} --public
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  # validate-code:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - check-changes
+  #   steps:
+  #     - uses: actions/checkout@v4
+
   
   distribute-module:
     runs-on: ubuntu-latest

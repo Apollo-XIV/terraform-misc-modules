@@ -19,10 +19,12 @@ module "env_gen" {
   version      = "0.0.19"
   ENV          = var.ENV
   environments = var.environments
-  variables    = merge(var.variables, {
+  variables = merge(var.variables, {
+    env      = "string"
     role_arn = "string"
   })
-  passthrough  = {
+  passthrough = {
+    env      = var.ENV
     role_arn = local.role_arn
   }
 

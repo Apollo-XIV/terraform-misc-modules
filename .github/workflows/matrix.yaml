@@ -12,6 +12,9 @@ jobs:
     outputs:
       changed_dirs: steps.path-check.outputs.changed_dirs
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - id: path-check
         uses: ./.github/actions/changes
     

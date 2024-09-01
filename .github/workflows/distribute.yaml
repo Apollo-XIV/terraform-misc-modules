@@ -6,9 +6,9 @@ on:
       module:
         required: true
         type: true
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
   check-changes:

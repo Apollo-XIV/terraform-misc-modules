@@ -17,16 +17,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Define Top-Level Changed Files
+      - name: Define and Filter Top-Level Changed Folders
         id: changed_dirs
         run: |
-          # Get the list of top-level directories/files that changed in the last commit
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | awk -F/ '{print $1}' | sort | uniq)
-          # Filter directories/files by pattern: values interspersed by hyphens
-          FILTERED_DIRS=$(echo "$CHANGED_FILES" | grep -E '^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)+$')
+          # Get the list of top-level directories that changed in the last commit
+          CHANGED_DIRS=$(git diff --name-only HEAD^ HEAD | awk -F/ '{print $1}' | sort | uniq)
+          # Filter directories by pattern: values interspersed by hyphens
+          FILTERED_DIRS=$(echo "$CHANGED_DIRS" | grep -E '^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)+$')
           # Convert the filtered list to an array format
-          TOP_LEVEL_FILES=$(printf '["%s"]' "$(echo $FILTERED_DIRS | tr ' ' '","')")
-          echo "changed_dirs=$TOP_LEVEL_FILES" >> "$GITHUB_OUTPUT"
+          if [ -n "$FILTERED_DIRS" ]; then
+            TOP_LEVEL_DIRS=$(printf '["%s"]' "$(echo $FILTERED_DIRS | tr '\n' '","' | sed 's/,$//')")
+          else
+            TOP_LEVEL_DIRS="[]"
+          fi
+          echo "changed_dirs=$TOP_LEVEL_DIRS" >> "$GITHUB_OUTPUT"
   organise-jobs:
     needs:
       - changes

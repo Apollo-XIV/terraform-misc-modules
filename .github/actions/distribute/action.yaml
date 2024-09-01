@@ -26,6 +26,7 @@ runs:
         GH_TOKEN: ${{inputs.PERSONAL_ACCESS_TOKEN}}
 
     - name: Create repository if it does not exist
+      if: ${{env.repo_exists}} == 'false'
       shell: bash
       run: |
         gh repo create Apollo-XIV/terraform-${{inputs.module}} --public

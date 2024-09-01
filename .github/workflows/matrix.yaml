@@ -28,7 +28,7 @@ jobs:
               - '${{matrix.module}}/**'
 
       - name: Run distribution workflow
-        if: steps.changes.outputs.matrix.module == 'true'
+        if: steps.changes.outputs.module == 'true'
         uses: ./.github/actions/distribute
         with:
           module: ${{matrix.module}}

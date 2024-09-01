@@ -9,39 +9,29 @@ on:
 jobs:
   changes:
     runs-on: ubuntu-latest
-    name: Detect module changes
-    # Required permissions
-    permissions:
-      pull-requests: read
-    strategy:
-      matrix:
-        module: 
-          - aws-backend-manager
-          - aws-s3-backend
-          - local-env-gen
-    # Set job outputs to values from filter step
+
     outputs:
-      module: ${{ steps.filter.outputs.module}}
+      changed_dirs: ${{ steps.changed_dirs.outputs.changed_dirs }}
+
     steps:
-    # For pull requests it's not necessary to checkout the code
-    - uses: actions/checkout@v4
-    - uses: dorny/paths-filter@v3
-      id: filter
-      with:
-        filters: |
-          module:
-            - '${{matrix.module}}/**'
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Define Top-Level Changed Files
+        id: changed_dirs
+        run: |
+          # Get the list of top-level directories/files that changed in the last commit
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | awk -F/ '{print $1}' | sort | uniq)
+          # Convert the list to an array format
+          TOP_LEVEL_FILES=$(printf '["%s"]' "$(echo $CHANGED_FILES | tr ' ' '","')")
+          echo "changed_dirs=$TOP_LEVEL_FILES" >> "$GITHUB_OUTPUT"
   organise-jobs:
     needs:
       - changes
-    if: ${{ needs.changes.outputs.module == 'true' }}
     name: Distribute on change
     strategy:
       matrix:
-        module: 
-          - aws-backend-manager
-          - aws-s3-backend
-          - local-env-gen
+        module: ${{ fromJSON(needs.define-matrix.outputs.changed_dirs) }}
     # uses: ./.github/actions/distribute
     uses: ./.github/workflows/distribute.yaml
     with:

@@ -2,13 +2,13 @@ locals {
   env = tomap(merge(try(yamldecode(file("${var.environment_configs_dir}/${var.ENV}-environment.yaml")), {}), var.passthrough))
   values = {
     for k, v in var.variables : k =>
-      local.env[k]
+    local.env[k]
   }
 }
 
 resource "local_file" "vars_tf" {
   count           = length(var.variables) == 0 ? 0 : 1
-  filename        = "${path.root}/env.tf.json"
+  filename        = "${var.output_dir}/env.tf.json"
   file_permission = "0444"
   content = jsonencode({
     variable = {
@@ -22,7 +22,7 @@ resource "local_file" "vars_tf" {
 
 resource "local_file" "environment_tfvars" {
   count           = length(var.variables) == 0 ? 0 : 1
-  filename        = "${path.root}/env.auto.tfvars"
+  filename        = "${var.output_dir}/env.auto.tfvars"
   file_permission = "0444"
-  content = provider::terraform::encode_tfvars(local.values)
+  content         = provider::terraform::encode_tfvars(local.values)
 }

@@ -7,11 +7,12 @@ locals {
 
 module "s3_backend" {
   source  = "Apollo-XIV/s3-backend/aws"
-  version = "0.0.5"
+  version = "0.0.9"
   prefix  = var.prefix
 
   environments  = var.environments
   approved_arns = var.approved_arns
+  force_destroy = var.force_destroy
 }
 
 module "env_gen" {

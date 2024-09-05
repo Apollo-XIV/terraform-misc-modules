@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "state" {
   bucket_prefix = "${var.prefix}-state-"
+  force_destroy = var.force_destroy
 
   # lifecycle {
   #   prevent_destroy = true

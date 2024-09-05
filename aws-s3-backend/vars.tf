@@ -13,6 +13,11 @@ variable "approved_arns" {
   type = list(string)
 }
 
+variable "force_destroy" {
+  type    = bool
+  default = false
+}
+
 output "bucket" {
   value = aws_s3_bucket.state.bucket
 }

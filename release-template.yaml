@@ -57,8 +57,8 @@ jobs:
         uses: actions/create-release@v1
         with:
           tag_name: ${{ env.new_version }}
-          release_name: "Release ${{ steps.calc_version.outputs.new_version }}"
-          body: "Automated release for version ${{ steps.calc_version.outputs.new_version }}."
+          release_name: "Release ${{ env.new_version }}"
+          body: "Automated release for version ${{ env.new_version }}."
           draft: false
           prerelease: false
         env:

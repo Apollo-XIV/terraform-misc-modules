@@ -1,6 +1,6 @@
 locals {
   bucket_name        = module.s3_backend.bucket
-  dynamodb_table_arn = module.s3_backend.lock_tables[var.ENV]
+  dynamodb_table_arn = try(module.s3_backend.lock_tables[var.ENV], "")
   bucket_key         = "${var.prefix}-${var.ENV}.tfstate"
   role_arn           = module.s3_backend.role_arn
 }

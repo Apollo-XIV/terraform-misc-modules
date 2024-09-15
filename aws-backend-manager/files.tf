@@ -30,7 +30,7 @@ resource "local_file" "backend" {
 
 resource "local_file" "rec_backend" {
   filename        = "backend.tf.json"
-  file_permission = "0444"
+  file_permission = "0644"
   content = jsonencode({
     terraform = {
       backend = {

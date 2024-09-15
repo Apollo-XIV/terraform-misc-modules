@@ -22,7 +22,8 @@ module "backend" {
   approved_arns = [
     data.aws_caller_identity.current.arn
   ]
-  force_destroy = true
+  force_destroy   = true
+  enable_dynamodb = false
 }
 
 data "aws_caller_identity" "current" {}

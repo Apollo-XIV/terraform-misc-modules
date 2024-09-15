@@ -13,7 +13,7 @@ variable "approved_arns" {
   type = list(string)
 }
 
-variable "enable_dyanmodb" {
+variable "enable_dynamodb" {
   type    = bool
   default = true
 }

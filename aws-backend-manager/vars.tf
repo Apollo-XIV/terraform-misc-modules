@@ -42,23 +42,9 @@ variable "force_destroy" {
   default = false
 }
 
-variable "required_version" {
-  default     = ">=1.9.5"
-  type        = string
-  description = "The required terraform version"
-}
-
-variable "required_providers" {
-  default = {
-    aws = {
-      version = ">=5.60.0"
-      source  = "hashicorp/aws"
-    }
-  }
-  type = map(object({
-    source  = string
-    version = string
-  }))
+variable "enable_dynamodb" {
+  type    = bool
+  default = true
 }
 
 output "role_arn" {

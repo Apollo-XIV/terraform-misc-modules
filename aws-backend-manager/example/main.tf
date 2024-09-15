@@ -22,6 +22,7 @@ module "backend" {
   approved_arns = [
     data.aws_caller_identity.current.arn
   ]
+  force_destroy = true
 }
 
 data "aws_caller_identity" "current" {}

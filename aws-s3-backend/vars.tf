@@ -13,6 +13,11 @@ variable "approved_arns" {
   type = list(string)
 }
 
+variable "enable_dyanmodb" {
+  type    = bool
+  default = true
+}
+
 variable "force_destroy" {
   type    = bool
   default = false
@@ -29,3 +34,4 @@ output "lock_tables" {
 output "role_arn" {
   value = aws_iam_role.iac_role.arn
 }
+

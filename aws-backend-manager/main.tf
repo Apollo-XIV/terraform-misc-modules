@@ -7,7 +7,7 @@ locals {
 
 module "s3_backend" {
   source  = "Apollo-XIV/s3-backend/aws"
-  version = "0.0.12"
+  version = "0.0.13"
   prefix  = var.prefix
 
   environments    = var.environments
